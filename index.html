@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>太极拳动作识别 - 上传照片</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "微软雅黑", "PingFang SC", sans-serif; background: #f5f7fa; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); padding: 30px; }
+        h1 { font-size: 24px; color: #2c3e50; margin-bottom: 20px; text-align: center; }
+        .tip-box { background: #e8f4f8; border: 1px solid #d1e7dd; border-radius: 8px; padding: 15px; margin: 20px 0; }
+        .tip-box h3 { font-size: 16px; color: #198754; margin-bottom: 10px; }
+        .tip-box ul { font-size: 14px; color: #6c757d; list-style: none; line-height: 1.8; }
+        .upload-box { border: 2px dashed #ced4da; border-radius: 8px; padding: 40px 20px; text-align: center; margin: 20px 0; cursor: pointer; transition: border 0.3s; }
+        .upload-box:hover { border-color: #2563eb; }
+        .upload-box input { display: none; }
+        .upload-box i { font-size: 40px; color: #2563eb; margin-bottom: 15px; }
+        .upload-text { font-size: 16px; color: #495057; }
+        .btn { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 10px; transition: background 0.3s; }
+        .btn:disabled { background: #adb5bd; cursor: not-allowed; }
+        .flash { background: #f8d7da; color: #b91c1c; padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 14px; }
+        .file-name { font-size: 14px; color: #2563eb; margin: 10px 0; text-align: center; }
+    </style>
+    <!-- 简易图标（无需外部库） -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>太极拳动作识别系统</h1>
+        <!-- 错误提示 -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for m in messages %}
+                    <div class="flash">{{ m }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <!-- 拍照提示 -->
+        <div class="tip-box">
+            <h3><i class="fas fa-camera"></i> 最佳拍照建议</h3>
+            <ul>
+                <li>✅ 人物全身入镜，关节点（肩/膝/踝）清晰可见</li>
+                <li>✅ 背景简洁（纯色墙/天空），与人物有对比度</li>
+                <li>✅ 光线充足，避免逆光/过暗，单人拍摄</li>
+                <li>✅ 图片格式：JPG/PNG/BMP，大小≤4MB</li>
+            </ul>
+        </div>
+        <!-- 上传表单 -->
+        <form method="post" enctype="multipart/form-data" id="uploadForm">
+            <label class="upload-box" for="fileInput">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <div class="upload-text">点击选择图片 / 拖拽图片到此处</div>
+                <input type="file" id="fileInput" name="file" accept="image/jpg,image/jpeg,image/png,image/bmp" required>
+            </label>
+            <div class="file-name" id="fileName"></div>
+            <button type="submit" class="btn" id="submitBtn" disabled>上传并分析动作</button>
+        </form>
+    </div>
+
+    <script>
+        // 实时显示文件名+启用按钮
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const submitBtn = document.getElementById('submitBtn');
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const name = e.target.files[0].name;
+                fileName.innerText = `已选择：${name}`;
+                submitBtn.disabled = false;
+            } else {
+                fileName.innerText = "";
+                submitBtn.disabled = true;
+            }
+        });
+        // 拖拽上传
+        const uploadBox = document.querySelector('.upload-box');
+        uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadBox.style.borderColor = '#2563eb';
+        });
+        uploadBox.addEventListener('dragleave', () => {
+            uploadBox.style.borderColor = '#ced4da';
+        });
+        uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadBox.style.borderColor = '#ced4da';
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                fileName.innerText = `已选择：${e.dataTransfer.files[0].name}`;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
