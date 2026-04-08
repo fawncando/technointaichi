@@ -10,42 +10,44 @@
             margin: 0; 
             padding: 0; 
             box-sizing: border-box; 
-            transition: all 0.3s ease; /* 全局过渡动画，提升丝滑感 */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 更丝滑的过渡曲线 */
         }
         :root {
-            /* 主题色变量，方便统一修改 */
-            --primary: #2563eb;
-            --primary-light: #3b82f6;
-            --success: #10b981;
-            --danger: #ef4444;
-            --bg: #f0f4f8;
-            --card-bg: #ffffff;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --border: #e2e8f0;
-            --shadow: 0 4px 20px rgba(0,0,0,0.08);
-            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+            /* 主题色变量（优化：新增太极青/灰，强化专业感） */
+            --primary: #165DFF;
+            --primary-light: #4080FF;
+            --primary-ultralight: #E8F3FF;
+            --success: #00B42A;
+            --danger: #F53F3F;
+            --bg: #F2F3F5;
+            --card-bg: #FFFFFF;
+            --text-primary: #1D2129;
+            --text-secondary: #86909C;
+            --border: #DCDFE6;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.1);
+            --shadow-active: 0 2px 8px rgba(0, 0, 0, 0.12);
         }
         body { 
-            font-family: "PingFang SC", "Microsoft YaHei", sans-serif; 
+            font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif; 
             background: var(--bg);
             min-height: 100vh;
-            padding: 40px 20px;
+            padding: 24px 16px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .container { 
-            max-width: 650px; 
+            max-width: 680px; 
             width: 100%;
             background: var(--card-bg); 
-            border-radius: 20px; 
+            border-radius: 16px; /* 优化：更柔和的圆角 */
             box-shadow: var(--shadow); 
-            padding: 40px 35px;
+            padding: 32px 28px;
             position: relative;
             overflow: hidden;
         }
-        /* 顶部装饰条，提升设计感 */
+        /* 顶部装饰条（修复：渐变过渡更自然，无错位） */
         .container::before {
             content: '';
             position: absolute;
@@ -53,122 +55,124 @@
             left: 0;
             width: 100%;
             height: 6px;
-            background: linear-gradient(90deg, var(--primary), var(--success));
+            background: linear-gradient(90deg, var(--primary), var(--success), #70B7FF);
+            border-radius: 16px 16px 0 0; /* 匹配容器圆角，消除视觉错位 */
         }
         h1 { 
-            font-size: 28px; 
+            font-size: 26px; 
             color: var(--text-primary); 
-            margin-bottom: 30px; 
+            margin-bottom: 28px; 
             text-align: center;
-            font-weight: 700;
+            font-weight: 600;
             letter-spacing: 0.5px;
         }
         /* 错误提示样式优化 */
         .flash { 
-            background: #fef2f2; 
+            background: #FFF1F0; 
             color: var(--danger); 
-            border: 1px solid #fecaca;
-            padding: 14px; 
+            border: 1px solid #FFEAE8;
+            padding: 12px 16px; 
             border-radius: 12px; 
-            margin-bottom: 25px; 
+            margin-bottom: 24px; 
             text-align: center; 
-            font-size: 15px;
+            font-size: 14px; 
             font-weight: 500;
             animation: slideDown 0.3s ease;
         }
         @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        /* 拍照提示框升级 */
+        /* 拍照提示框升级（优化：视觉层次更清晰） */
         .tip-box { 
-            background: #f0fdf4; 
-            border: 1px solid #bbf7d0;
-            border-radius: 16px; 
-            padding: 22px 25px; 
-            margin: 0 0 30px 0;
+            background: var(--primary-ultralight); 
+            border: 1px solid var(--primary-ultralight);
+            border-radius: 12px; 
+            padding: 20px 24px; 
+            margin: 0 0 28px 0;
         }
         .tip-box h3 { 
-            font-size: 18px; 
-            color: var(--success); 
-            margin-bottom: 15px;
+            font-size: 16px; 
+            color: var(--primary); 
+            margin-bottom: 16px;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         .tip-box ul { 
-            font-size: 15px; 
+            font-size: 14px; 
             color: var(--text-secondary); 
             list-style: none; 
-            line-height: 2;
+            line-height: 1.8;
         }
         .tip-box li {
             display: flex;
             align-items: center;
             gap: 10px;
+            margin-bottom: 8px;
         }
+        .tip-box li:last-child { margin-bottom: 0; }
         .tip-box li i {
-            color: var(--success);
+            color: var(--success); 
             font-size: 16px;
+            flex-shrink: 0; /* 防止图标挤压 */
         }
-        /* 上传区域大升级 */
+        /* 上传区域大升级（修复：拖拽状态蓝色框无错位，优化交互） */
         .upload-box { 
             border: 2px dashed var(--border); 
-            border-radius: 16px; 
-            padding: 50px 20px; 
+            border-radius: 12px; 
+            padding: 48px 20px; 
             text-align: center; 
-            margin: 0 0 20px 0;
+            margin: 0 0 16px 0;
             cursor: pointer; 
-            background: #fafbfc;
+            background: #FAFAFA;
+            position: relative; /* 修复：作为定位基准，防止子元素错位 */
         }
-        .upload-box:hover { 
-            border-color: var(--primary);
-            background: #f8faff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
-        }
+        /* 修复：拖拽状态蓝色框无错位，添加过渡动画 */
         .upload-box.dragover {
             border-color: var(--primary);
-            background: #f0f7ff;
-            transform: scale(1.01);
+            background: var(--primary-ultralight);
+            transform: scale(1.005); /* 轻微缩放，无错位 */
+            box-shadow: var(--shadow-active);
+        }
+        .upload-box:hover { 
+            border-color: var(--primary-light);
+            background: #F8F9FA;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
         }
         .upload-box input { 
             display: none; 
         }
         .upload-box i { 
-            font-size: 50px; 
+            font-size: 48px; 
             color: var(--primary); 
-            margin-bottom: 20px;
-            opacity: 0.8;
+            margin-bottom: 16px;
+            opacity: 0.9;
         }
         .upload-text { 
-            font-size: 17px; 
+            font-size: 16px; 
             color: var(--text-primary);
             font-weight: 500;
+            margin-bottom: 8px;
         }
         .upload-subtext {
             font-size: 13px;
             color: var(--text-secondary);
-            margin-top: 8px;
         }
         /* 文件名显示优化 */
         .file-name { 
-            font-size: 15px; 
+            font-size: 14px; 
             color: var(--primary); 
             margin: 0 0 20px 0;
             text-align: center;
             font-weight: 500;
-            padding: 8px 12px;
-            background: #f0f7ff;
+            padding: 10px 16px;
+            background: var(--primary-ultralight);
             border-radius: 8px;
             display: none; /* 默认隐藏，选择文件后显示 */
+            border: 1px solid rgba(22, 93, 255, 0.2);
         }
         .file-name.show {
             display: block;
@@ -178,27 +182,32 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        /* 按钮样式升级 */
+        /* 按钮样式升级（优化：更贴合太极场景的柔和感） */
         .btn { 
             width: 100%; 
-            padding: 15px; 
+            padding: 14px; 
             background: var(--primary); 
             color: white; 
             border: none; 
-            border-radius: 12px; 
-            font-size: 17px; 
+            border-radius: 10px; 
+            font-size: 16px; 
             font-weight: 600;
             cursor: pointer; 
             letter-spacing: 0.5px;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 4px 12px rgba(22, 93, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         .btn:hover:not(:disabled) { 
             background: var(--primary-light);
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 6px 16px rgba(22, 93, 255, 0.25);
         }
         .btn:active:not(:disabled) {
             transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(22, 93, 255, 0.15);
         }
         .btn:disabled { 
             background: var(--border); 
@@ -206,20 +215,31 @@
             box-shadow: none;
             color: var(--text-secondary);
         }
-        /* 响应式适配 */
+        .btn i { font-size: 18px; }
+        /* 响应式适配（优化：移动端更紧凑） */
         @media (max-width: 768px) {
             body {
-                padding: 20px 15px;
+                padding: 16px 12px;
             }
             .container {
-                padding: 30px 20px;
+                padding: 24px 20px;
             }
             h1 {
-                font-size: 24px;
+                font-size: 22px;
             }
             .upload-box {
-                padding: 40px 15px;
+                padding: 36px 16px;
             }
+            .upload-box i { font-size: 40px; }
+            .tip-box { padding: 16px 20px; }
+        }
+        /* 优化：加载状态动画 */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading {
+            animation: spin 1s linear infinite;
         }
     </style>
     <!-- 图标库 -->
@@ -248,14 +268,18 @@
         </div>
         <!-- 上传表单 -->
         <form method="post" enctype="multipart/form-data" id="uploadForm">
-            <label class="upload-box" for="fileInput">
+            <!-- 修复：上传区域作为定位基准，蓝色框无错位 -->
+            <label class="upload-box" for="fileInput" id="uploadLabel">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <div class="upload-text">点击选择图片 / 拖拽图片到此处</div>
                 <div class="upload-subtext">支持 JPG、PNG、BMP 格式，单张最大 4MB</div>
                 <input type="file" id="fileInput" name="file" accept="image/jpg,image/jpeg,image/png,image/bmp" required>
             </label>
             <div class="file-name" id="fileName"></div>
-            <button type="submit" class="btn" id="submitBtn" disabled>上传并分析动作</button>
+            <button type="submit" class="btn" id="submitBtn" disabled>
+                <i class="fas fa-upload"></i>
+                上传并分析动作
+            </button>
         </form>
     </div>
 
@@ -264,7 +288,7 @@
         const fileInput = document.getElementById('fileInput');
         const fileName = document.getElementById('fileName');
         const submitBtn = document.getElementById('submitBtn');
-        const uploadBox = document.querySelector('.upload-box');
+        const uploadLabel = document.getElementById('uploadLabel'); // 修复：获取上传区域标签
 
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
@@ -288,19 +312,19 @@
             }
         });
 
-        // 拖拽上传
-        uploadBox.addEventListener('dragover', (e) => {
+        // 拖拽上传（修复：拖拽状态蓝色框无错位）
+        uploadLabel.addEventListener('dragover', (e) => {
             e.preventDefault();
-            uploadBox.classList.add('dragover');
+            uploadLabel.classList.add('dragover'); // 修复：给标签添加类，而非父容器
         });
 
-        uploadBox.addEventListener('dragleave', () => {
-            uploadBox.classList.remove('dragover');
+        uploadLabel.addEventListener('dragleave', () => {
+            uploadLabel.classList.remove('dragover'); // 修复：移除类
         });
 
-        uploadBox.addEventListener('drop', (e) => {
+        uploadLabel.addEventListener('drop', (e) => {
             e.preventDefault();
-            uploadBox.classList.remove('dragover');
+            uploadLabel.classList.remove('dragover'); // 修复：移除类
             if (e.dataTransfer.files.length > 0) {
                 const file = e.dataTransfer.files[0];
                 // 校验文件格式和大小
@@ -324,6 +348,13 @@
                 fileName.classList.add('show');
                 fileName.style.color = 'var(--primary)';
                 submitBtn.disabled = false;
+            }
+        });
+
+        // 修复：点击上传区域空白处也能触发文件选择
+        uploadLabel.addEventListener('click', (e) => {
+            if (e.target === uploadLabel) {
+                fileInput.click();
             }
         });
     </script>
