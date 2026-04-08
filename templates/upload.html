@@ -3,321 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>太极拳动作识别 - 上传照片</title>
+    <title>上传照片 - 太极拳动作识别</title>
     <style>
-        /* 全局样式重置：完全消除默认边距，杜绝错位根源 */
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            transition: all 0.3s ease;
-        }
-        :root {
-            /* 严格匹配截图的色彩体系 */
-            --primary: #2563eb;
-            --success: #10b981;
-            --bg: #f0f4f8;
-            --card-bg: #ffffff;
-            --text-primary: #1e293b;
-            --text-secondary: #475569;
-            --border: #e2e8f0;
-            --tip-bg: #f0f9ff;
-            --shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-        body { 
-            font-family: "PingFang SC", "Microsoft YaHei", sans-serif; 
-            background: var(--bg);
-            min-height: 100vh;
-            padding: 40px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        /* 主容器：严格匹配截图的圆角、内边距，杜绝错位 */
-        .container { 
-            max-width: 650px; 
-            width: 100%;
-            background: var(--card-bg); 
-            border-radius: 16px; 
-            box-shadow: var(--shadow); 
-            padding: 32px 35px;
-            position: relative;
-            overflow: hidden;
-        }
-        /* 顶部渐变条：1:1匹配截图，无任何错位 */
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            background: linear-gradient(90deg, var(--primary), var(--success));
-            border-radius: 16px 16px 0 0;
-        }
-        h1 { 
-            font-size: 28px; 
-            color: var(--text-primary); 
-            margin-bottom: 24px; 
-            text-align: center;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        /* 拍照提示框：严格匹配截图的浅蓝色背景、圆角、布局 */
-        .tip-box { 
-            background: var(--tip-bg); 
-            border: 1px solid #e0f2fe;
-            border-radius: 12px; 
-            padding: 20px 24px; 
-            margin: 0 0 20px 0;
-        }
-        .tip-box h3 { 
-            font-size: 17px; 
-            color: var(--primary); 
-            margin-bottom: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .tip-box ul { 
-            font-size: 15px; 
-            color: var(--text-secondary); 
-            list-style: none; 
-            line-height: 2;
-        }
-        .tip-box li {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .tip-box li i {
-            color: var(--success);
-            font-size: 16px;
-            flex-shrink: 0; /* 强制图标不挤压文字，杜绝错位 */
-        }
-        /* 上传区域：彻底修复错位，1:1还原截图的虚线框+图标布局 */
-        .upload-box { 
-            border: 2px dashed var(--border); 
-            border-radius: 16px; 
-            padding: 40px 20px; 
-            text-align: center; 
-            margin: 0 0 16px 0;
-            cursor: pointer; 
-            background: #fafbfc;
-            position: relative; /* 绝对定位基准，彻底杜绝图标错位 */
-        }
-        /* 左侧云图标：严格固定位置，1:1匹配截图，永不错位 */
-        .upload-box::before {
-            content: '\f0ee'; /* Font Awesome 云上传图标 */
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 48px;
-            color: var(--primary);
-            opacity: 0.9;
-        }
-        /* 左侧虚线装饰：严格匹配截图的左侧虚线框，无错位 */
-        .upload-box::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 120px;
-            border-right: 2px dashed var(--border);
-            border-radius: 16px 0 0 16px;
-            clip-path: polygon(0 0, 100% 0, 100% 30%, 0 30%, 0 70%, 100% 70%, 100% 100%, 0 100%);
-        }
-        /* 拖拽状态：蓝色边框完全贴合容器，无任何错位 */
-        .upload-box.dragover {
-            border-color: var(--primary);
-            background: #f0f7ff;
-        }
-        .upload-box:hover { 
-            border-color: var(--primary);
-            background: #f8faff;
-        }
-        .upload-box input { 
-            display: none; 
-        }
-        /* 上传文字：居中对齐，不被左侧图标挤压，杜绝错位 */
-        .upload-text { 
-            font-size: 17px; 
-            color: var(--text-primary);
-            font-weight: 500;
-            margin-left: 120px; /* 给左侧图标/虚线留空间，完美对齐 */
-        }
-        .upload-subtext {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-top: 8px;
-            margin-left: 120px; /* 同步对齐，杜绝错位 */
-        }
-        /* 文件名显示：严格居中，无错位 */
-        .file-name { 
-            font-size: 15px; 
-            color: var(--primary); 
-            margin: 0 0 16px 0;
-            text-align: center;
-            font-weight: 500;
-            padding: 8px 12px;
-            background: #f0f7ff;
-            border-radius: 8px;
-            display: none;
-        }
-        .file-name.show {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        /* 按钮：严格匹配截图的灰色禁用态、图标、圆角，无错位 */
-        .btn { 
-            width: 100%; 
-            padding: 14px; 
-            background: var(--border); 
-            color: var(--text-secondary);
-            border: none; 
-            border-radius: 12px; 
-            font-size: 17px; 
-            font-weight: 600;
-            cursor: not-allowed; 
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .btn.active {
-            background: var(--primary);
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-        }
-        .btn.active:hover { 
-            background: #3b82f6;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
-        }
-        /* 响应式适配：移动端自动适配，无错位 */
-        @media (max-width: 768px) {
-            .container {
-                padding: 24px 20px;
-            }
-            .upload-box::before, .upload-box::after {
-                display: none; /* 移动端隐藏左侧装饰，避免挤压 */
-            }
-            .upload-text, .upload-subtext {
-                margin-left: 0;
-            }
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; padding: 24px; }
+        .card { max-width: 560px; margin: 0 auto; padding: 24px; border: 1px solid #e5e7eb; border-radius: 10px; }
+        h1 { font-size: 22px; margin-top: 0; }
+        .tip { color: #6b7280; font-size: 14px; }
+        input[type="file"] { margin: 12px 0; }
+        button { padding: 8px 14px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        button:hover { background: #1d4ed8; }
+        .flash { color: #b91c1c; margin-bottom: 8px; }
     </style>
-    <!-- 图标库：确保图标正常显示，杜绝图标错位 -->
-    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <div class="container">
-        <h1>太极拳动作识别系统</h1>
-        <!-- 拍照提示：1:1匹配截图 -->
-        <div class="tip-box">
-            <h3><i class="fas fa-camera-retro"></i> 最佳拍照建议</h3>
-            <ul>
-                <li><i class="fas fa-check-circle"></i> 人物全身入镜，关节点（肩/膝/踝）清晰可见</li>
-                <li><i class="fas fa-check-circle"></i> 背景简洁（纯色墙/天空），与人物有对比度</li>
-                <li><i class="fas fa-check-circle"></i> 光线充足，避免逆光/过暗，单人拍摄</li>
-                <li><i class="fas fa-check-circle"></i> 图片格式：JPG/PNG/BMP，大小≤4MB</li>
-            </ul>
-        </div>
-        <!-- 上传表单：彻底修复错位 -->
-        <form method="post" enctype="multipart/form-data" id="uploadForm">
-            <label class="upload-box" for="fileInput">
-                <div class="upload-text">点击选择图片 / 拖拽图片到此处</div>
-                <div class="upload-subtext">支持 JPG、PNG、BMP 格式，单张最大 4MB</div>
-                <input type="file" id="fileInput" name="file" accept="image/jpg,image/jpeg,image/png,image/bmp" required>
-            </label>
-            <div class="file-name" id="fileName"></div>
-            <button type="submit" class="btn" id="submitBtn">
-                <i class="fas fa-upload"></i>
-                上传并分析动作
-            </button>
-        </form>
-    </div>
-
+    <!--
+      简单上传页：提交到 / 使用 multipart/form-data
+    -->
     <script>
-        // 核心交互：严格对应UI，无错位
-        const fileInput = document.getElementById('fileInput');
-        const fileName = document.getElementById('fileName');
-        const submitBtn = document.getElementById('submitBtn');
-        const uploadBox = document.querySelector('.upload-box');
-
-        // 文件选择逻辑
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                const file = e.target.files[0];
-                // 4MB大小校验
-                if (file.size > 4 * 1024 * 1024) {
-                    fileName.innerText = `❌ 文件过大：${file.name}（最大支持4MB）`;
-                    fileName.classList.add('show');
-                    fileName.style.color = '#ef4444';
-                    submitBtn.classList.remove('active');
-                    return;
-                }
-                fileName.innerText = `✅ 已选择：${file.name}`;
-                fileName.classList.add('show');
-                fileName.style.color = 'var(--primary)';
-                submitBtn.classList.add('active');
-            } else {
-                fileName.innerText = "";
-                fileName.classList.remove('show');
-                submitBtn.classList.remove('active');
-            }
-        });
-
-        // 拖拽上传：彻底修复边框错位
-        uploadBox.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadBox.classList.add('dragover');
-        });
-
-        uploadBox.addEventListener('dragleave', () => {
-            uploadBox.classList.remove('dragover');
-        });
-
-        uploadBox.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadBox.classList.remove('dragover');
-            if (e.dataTransfer.files.length > 0) {
-                const file = e.dataTransfer.files[0];
-                // 格式校验
-                const validTypes = ['image/jpeg', 'image/png', 'image/bmp'];
-                if (!validTypes.includes(file.type)) {
-                    fileName.innerText = `❌ 格式不支持：${file.name}（仅支持JPG/PNG/BMP）`;
-                    fileName.classList.add('show');
-                    fileName.style.color = '#ef4444';
-                    submitBtn.classList.remove('active');
-                    return;
-                }
-                // 大小校验
-                if (file.size > 4 * 1024 * 1024) {
-                    fileName.innerText = `❌ 文件过大：${file.name}（最大支持4MB）`;
-                    fileName.classList.add('show');
-                    fileName.style.color = '#ef4444';
-                    submitBtn.classList.remove('active');
-                    return;
-                }
-                fileInput.files = e.dataTransfer.files;
-                fileName.innerText = `✅ 已选择：${file.name}`;
-                fileName.classList.add('show');
-                fileName.style.color = 'var(--primary)';
-                submitBtn.classList.add('active');
-            }
+        function onFileChange(e) {
+            const file = e.target.files && e.target.files[0];
+            const ok = !!file && /image\//.test(file.type);
+            document.getElementById('submitBtn').disabled = !ok;
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.querySelector('input[type="file"]');
+            if (input) { input.addEventListener('change', onFileChange); }
         });
     </script>
+    <script>
+        // no-op; reserved for future client-side validations
+    </script>
+</head>
+<body>
+    <div class="card">
+        <h1>上传你的太极拳动作照片</h1>
+        <p class="tip">支持常见图片格式，清晰、完整的人体有助于识别。</p>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for m in messages %}
+            <div class="flash">{{ m }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*" required>
+            <div>
+                <button id="submitBtn" type="submit" disabled>上传并分析</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
+
+
